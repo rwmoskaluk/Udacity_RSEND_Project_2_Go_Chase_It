@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     motor_command_publisher = n.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
     // TODO: Define a drive /ball_chaser/command_robot service with a handle_drive_request callback function
-    ros::ServiceServer service = n.advertiseService("/ball_chaser/DriveToTarget", handle_drive_request);
+    ros::ServiceServer service = n.advertiseService("/ball_chaser/command_robot", handle_drive_request);
     // TODO: Delete the loop, move the code to the inside of the callback function and make the necessary changes to publish the requested velocities instead of constant values
     /*
     while (ros::ok()) {
