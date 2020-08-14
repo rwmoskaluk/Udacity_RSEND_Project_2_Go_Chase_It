@@ -16,9 +16,12 @@ The objective of this project was to build a simplified robot with a sensor that
 <img src="pictures/Robot_Demo.gif?raw=true" width="720px">
 
 ### To Run
+Build the needed files via catkin_make, then source and launch the world to run
 ```
-source devel/setup.bash
-roslaunch my_robot world.launch
+$catkin_ws catkin_make
+
+$source devel/setup.bash
+$roslaunch my_robot world.launch
 ```
 Note: this will also launch ball_chaser.launch
 
