@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "ball_chaser/DriveToTarget.h"
 #include <sensor_msgs/Image.h>
+#include <string>
 
 // Define a global client that can request services
 ros::ServiceClient client;
@@ -20,28 +21,25 @@ void drive_robot(float lin_x, float ang_z)
 
 }
 
-float ball_offset(int remainder, int direction, int left_bound, int right_bound) {
+float ball_offset(int location, int direction, int left_bound, int right_bound, int center) {
     //calculates the index offset for driving the robot in the correct direction
     float offset = 0.0;
-    float center = 0.0;
     switch (direction) {
         case 1: //left
-            center = (left_bound / 2.0);
-            offset = (1.0 / (static_cast<float>(remainder) / center)) * 0.5;
-            //offset = 0.5;
+            //offset = (std::abs((center - location)) / center) * 1.0;
+            offset = 0.5;
             break;
         case 2: //middle
             offset = 0.0;
             break;
         case 3: //right
-            center = (left_bound / 2.0) + right_bound;
-            offset = (static_cast<float>(remainder) / center) * 0.5 * -1.0;
-            //offset = -0.5;
+            //offset = (std::abs((center - location)) / center) * - 1.0;
+            offset = -0.5;
             break;
     }
 
-    ROS_INFO_STREAM("Debugging information: center = " + std::to_string(center) + " offset = " + std::to_string(offset));
-    ROS_INFO_STREAM("Debugging information: remainder = " + std::to_string(remainder) + " left = " + std::to_string(left_bound) + " right = " + std::to_string(right_bound));
+    //ROS_INFO_STREAM("Debugging information: center = " + std::to_string(center) + " offset = " + std::to_string(offset));
+    //ROS_INFO_STREAM("Debugging information: location = " + std::to_string(location) + " left = " + std::to_string(left_bound) + " right = " + std::to_string(right_bound));
 
     return offset;
 }
@@ -53,17 +51,21 @@ void process_image_callback(const sensor_msgs::Image img)
     int white_pixel = 255;
     int left = static_cast<int>(img.step / 3.0);
     int right = static_cast<int>(img.step * (2.0/3.0));
+    int center = static_cast<int>(img.step * 2.0);
     bool white_found = false;
     float x = 0.5;
     float z = 0.0;
     int index = 0;
+    int location;
 
     // TODO: Loop through each pixel in the image and check if there's a bright white one
     // Then, identify if this pixel falls in the left, mid, or right side of the image
     // Depending on the white ball position, call the drive_bot function and pass velocities to it
     // Request a stop when there's no white ball seen by the camera
-    for (int i = 0; i < img.height * img.step; i++) {
-        if (img.data[i] == white_pixel) {
+
+
+    for (int i = 0; i+2 < img.height * img.step; i+=3) {
+        if (img.data[i] == white_pixel  && img.data[i+1] == white_pixel && img.data[i+2] == white_pixel) {
             index = i;
             white_found = true;
             break;
@@ -71,20 +73,20 @@ void process_image_callback(const sensor_msgs::Image img)
     }
     //test where i is in the data array to determine if left, middle, right of image
     if (white_found) {
-        int remainder = index % img.step;
-        if (remainder < left) {
+        location = index % img.step;
+        if (location < left) {
             //move to the left
             ROS_INFO_STREAM("Robot moving to the left!");
-            z = ball_offset(remainder, 1, left, right);
+            z = ball_offset(location, 1, left, right, center);
 
-        } else if (remainder > right) {
+        } else if (location > right) {
             //move to the right
             ROS_INFO_STREAM("Robot moving to the right!");
-            z = ball_offset(remainder, 2, left, right);
+            z = ball_offset(location, 2, left, right, center);
         } else {
             //move in the middle
             ROS_INFO_STREAM("Robot moving down the middle!");
-            z = ball_offset(remainder, 3, left, right);
+            z = ball_offset(location, 3, left, right, center);
         }
     }
     else {
@@ -92,8 +94,9 @@ void process_image_callback(const sensor_msgs::Image img)
         ROS_INFO_STREAM("Robot standing still, no white ball detected!");
         x = 0.0;
     }
-    ROS_INFO_STREAM("Image step = " + std::to_string(img.step));
+    //ROS_INFO_STREAM("Image step = " + std::to_string(img.step));
     ROS_INFO_STREAM("x = " + std::to_string(x) + " z = " + std::to_string(z));
+    ROS_INFO_STREAM("Location = " + std::to_string(location));
     drive_robot(x, z);
 
 }
