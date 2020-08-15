@@ -29,9 +29,16 @@
             <geometry>
                 <cylinder radius="0.1" length="0.05"/>
             </geometry>
+            <material name="orange">
+                <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
+            </material>
         </visual>
-
     </link>
+    <gazebo reference="left_wheel">
+        <material>
+            Gazebo/Orange
+        </material>
+    </gazebo>
 
     <link name="right_wheel">
         <inertial>
@@ -56,8 +63,17 @@
             <geometry>
                 <cylinder radius="0.1" length="0.05"/>
             </geometry>
+            <material name="orange">
+                <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
+            </material>
         </visual>
     </link>
+    <gazebo reference="right_wheel">
+        <material>
+            Gazebo/Orange
+        </material>
+    </gazebo>
+
 
     <link name='chassis'>
         <pose>0 0 0.1 0 0 0</pose>
@@ -84,6 +100,9 @@
             <geometry>
                 <box size=".4 .2 .1"/>
             </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0"/>
+            </material>
         </visual>
 
         <collision name='back_caster_collision'>
@@ -113,8 +132,12 @@
                 <sphere radius="0.05"/>
             </geometry>
         </visual>
-
     </link>
+    <gazebo reference="chassis">
+        <material>
+            Gazebo/Black
+        </material>
+    </gazebo>
 
     <link name="camera">
         <inertial>
@@ -139,8 +162,16 @@
             <geometry>
                 <box size="0.05 0.05 0.05"/>
             </geometry>
+            <material name="green">
+                <color rgba="0.0 0.8 0.0 1.0"/>
+            </material>
         </visual>
     </link>
+    <gazebo reference="camera">
+        <material>
+            Gazebo/Green
+        </material>
+    </gazebo>
 
     <link name="hokuyo">
         <inertial>

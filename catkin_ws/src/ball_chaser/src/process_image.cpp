@@ -27,14 +27,14 @@ float ball_offset(int location, int direction, int left_bound, int right_bound, 
     switch (direction) {
         case 1: //left
             //offset = (std::abs((center - location)) / center) * 1.0;
-            offset = 0.5;
+            offset = 0.1;
             break;
         case 2: //middle
             offset = 0.0;
             break;
         case 3: //right
             //offset = (std::abs((center - location)) / center) * - 1.0;
-            offset = -0.5;
+            offset = -0.1;
             break;
     }
 
